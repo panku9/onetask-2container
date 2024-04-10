@@ -33,10 +33,11 @@ jobs:
           docker build -t 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache:latest .
           docker push 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache:latest
       
-      # Register the ECS task definition
-      - name: Register ECS task definition
-        run: aws ecs register-task-definition --cli-input-json file://path/to/task-definition.json
-
+      - name: Get latest task definition revision
+        id: get-latest-revision
+        run: |
+          latest_revision=$(aws ecs describe-task-definition --task-definition arn:aws:ecs:us-east-1:318709527952:task-definition/nginx-apache | jq -r '.taskDefinition.revision')
+          echo "::set-output name=latest-revision::$latest_revision"
       # Run the ECS task
       - name: Run ECS task
         run: aws ecs run-task --cluster newwcluster --task-definition nginx-apache
