@@ -23,8 +23,8 @@ jobs:
       # Build and push the Docker images
       - name: Build and push Docker images
         run: |
-          docker build -t apache-image:latest docker
-          docker build -t nginx-image:latest nginx
+          docker build -t apache-image:latest docker/apache
+          docker build -t nginx-image:latest docker/nginx
           echo ${{ secrets.AWS_ACCESS_KEY_ID }} | docker login --username AWS --password-stdin 318709527952.dkr.ecr.us-east-1.amazonaws.com
           docker tag apache-image:latest 318709527952.dkr.ecr.us-east-1.amazonaws.com/apache-image:latest
           docker tag nginx-image:latest 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-image:latest
