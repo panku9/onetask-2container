@@ -25,13 +25,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
         with:
-          registry: 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache  # Use your repository URL here
+          registry: 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache
 
       # Build and push the Docker images
       - name: Build and push Docker images
         run: |
-          docker build -t 318709527952.dkr.ecr.us-east-1.amazonaws.com/apache-image:latest .
-          docker build -t 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-image:latest .
-          docker push 318709527952.dkr.ecr.us-east-1.amazonaws.com/apache-image:latest
-          docker push 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-image:latest
-
+          docker build -t 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache:apache-image .
+          docker build -t 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache:nginx-image .
+          docker push 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache:apache-image
+          docker push 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache:nginx-image
