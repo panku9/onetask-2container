@@ -1,4 +1,4 @@
-name: Deploy ECS Task
+name: Build and Push Docker Image
 
 on:
   push:
@@ -6,31 +6,26 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-push:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      # Authenticate with AWS and configure AWS CLI
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-      
-      # Login to Amazon ECR
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-        with:
-          registry: 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache
+      - name: Build Docker image
+        run: docker build -t my-nginx-image .
 
-      # Build and push the Docker images
-      - name: Build and push Docker images
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          region: <your-aws-region>
+
+      - name: Push Docker image to Amazon ECR
         run: |
-        
-          docker build -t 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache:nginx-image .
-          docker push 318709527952.dkr.ecr.us-east-1.amazonaws.com/nginx-apache:nginx-image
-         
+          docker tag my-nginx-image:latest ${{ steps.login-ecr.outputs.registry }}/my-nginx-image:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/my-nginx-image:latest
+
+      - name: Run Docker container
+        run: docker run -d -p 8081:8081 ${{ steps.login-ecr.outputs.registry }}/my-nginx-image:latest
