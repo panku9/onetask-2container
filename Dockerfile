@@ -5,7 +5,7 @@ FROM nginx:latest
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port 80 for the Nginx server
-EXPOSE 80
+EXPOSE 8081
 
 # Command to start Nginx when the container starts
 CMD ["nginx", "-g", "daemon off;"]
