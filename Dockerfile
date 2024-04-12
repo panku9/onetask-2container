@@ -16,9 +16,5 @@ RUN rm /etc/nginx/conf.d/default.conf
 # Expose port 80 for the Nginx server
 EXPOSE 8081
 
-# Copy Supervisor configuration
-COPY ./docker/nginx/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Start Supervisor to manage Nginx
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
