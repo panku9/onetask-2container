@@ -21,7 +21,7 @@ jobs:
           aws-region: us-east-1
 
       - name: Build Docker image
-        run: docker build -t my-nginx-image .
+        run: docker build -t nginx-apache:latest .
 
       - name: Log in to Amazon ECR
         id: login-ecr
@@ -31,8 +31,8 @@ jobs:
 
       - name: Push Docker image to Amazon ECR
         run: |
-          docker tag my-nginx-image:latest ${{ steps.login-ecr.outputs.registry }}/my-nginx-image:latest
-          docker push ${{ steps.login-ecr.outputs.registry }}/my-nginx-image:latest
+          docker tag nginx-apache:latest ${{ steps.login-ecr.outputs.registry }}/nginx-apache:latest
+          docker push ${{ steps.login-ecr.outputs.registry }}/nginx-apache:latest
 
       - name: Run Docker container
-        run: docker run -d -p 8081:8081 ${{ steps.login-ecr.outputs.registry }}/my-nginx-image:latest
+        run: docker run -d -p 8081:8081 ${{ steps.login-ecr.outputs.registry }}/nginx-apache:latest
