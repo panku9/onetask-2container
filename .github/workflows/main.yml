@@ -19,8 +19,8 @@ jobs:
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
-        with:
-          region: us-east-1
+        env:
+          AWS_REGION: us-east-1
 
       - name: Push Docker image to Amazon ECR
         run: |
@@ -29,3 +29,4 @@ jobs:
 
       - name: Run Docker container
         run: docker run -d -p 8081:8081 ${{ steps.login-ecr.outputs.registry }}/my-nginx-image:latest
+
