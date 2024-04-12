@@ -1,23 +1,24 @@
-# Use the official Apache base image
-FROM httpd:latest AS apache
+# Use the official Nginx image as the base image
+FROM nginx:latest
 
-# Copy Apache custom configuration file to Apache configuration directory
-#COPY ./apache/httpd.conf /usr/local/apache2/conf/httpd.conf
+# Set the working directory in the container
+WORKDIR /var/www/html
 
-# Expose port 8080 for Apache
-EXPOSE 8080
+# Install any dependencies required by Nginx
+RUN apt-get update && apt-get install -y nginx
 
-# Start Apache service
-CMD ["httpd", "-D", "FOREGROUND"]
+# Copy Nginx configuration file
+COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
-# Use the official Nginx base image
-FROM nginx:latest AS nginx
+# Remove the default Nginx configuration
+RUN rm /etc/nginx/conf.d/default.conf
 
-# Copy Nginx custom configuration file to Nginx configuration directory
-#COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
-
-# Expose port 8081 for Nginx
+# Expose port 80 for the Nginx server
 EXPOSE 8081
 
-# Start Nginx service
-CMD ["nginx", "-g", "daemon off;"]
+# Copy Supervisor configuration
+COPY ./docker/nginx/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Start Supervisor to manage Nginx
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+
